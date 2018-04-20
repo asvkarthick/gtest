@@ -1,2 +1,62 @@
 # gtest
 Repository to learn gtest
+
+Writing GTest
+=============
+mkdir example01
+cd example01
+
+squareroot.h
+============
+#include <math.h>
+ 
+double squareRoot(const double a) {
+    double b = sqrt(a);
+    if(b != b) { // nan check
+        return -1.0;
+    }else{
+        return sqrt(a);
+    }
+}
+
+tests.cpp
+=========
+#include "squareroot.h"
+#include <gtest/gtest.h>
+ 
+TEST(SquareRootTest, PositiveNos) { 
+    ASSERT_EQ(6, squareRoot(36.0));
+    ASSERT_EQ(18.0, squareRoot(324.0));
+    ASSERT_EQ(25.4, squareRoot(645.16));
+    ASSERT_EQ(0, squareRoot(0.0));
+}
+ 
+TEST(SquareRootTest, NegativeNos) {
+    ASSERT_EQ(-1.0, squareRoot(-15.0));
+    ASSERT_EQ(-1.0, squareRoot(-0.2));
+}
+ 
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
+
+CMakeLists.txt
+==============
+cmake_minimum_required(VERSION 2.6)
+ 
+# Locate GTest
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
+ 
+# Link runTests with what we want to test and the GTest and pthread library
+add_executable(runTests tests.cpp)
+target_link_libraries(runTests ${GTEST_LIBRARIES} pthread)
+
+Building GTest
+==============
+mkdir build
+cd build
+cmake ..
+make
+./runTests
